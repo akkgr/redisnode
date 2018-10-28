@@ -1,7 +1,15 @@
-const express = require('express')
-const app = express()
-
+const app = require('express')()
+const server = require('http').createServer(app)
+const io = require('socket.io')(server)
 const redisClient = require('./redis-client')
+
+io.on('connection', function() {
+  console.log('a user connected')
+  socket.on('disconnect', function() {
+    console.log('user disconnected')
+  })
+})
+
 app.get('/store/:key', async (req, res) => {
   const { key } = req.params
   const value = req.query
@@ -15,6 +23,6 @@ app.get('/:key', async (req, res) => {
 })
 
 const PORT = process.env.PORT || 3000
-app.listen(PORT, () => {
+server.listen(PORT, () => {
   console.log(`Server listening on port ${PORT}`)
 })
